@@ -1,4 +1,4 @@
-export enum SliceTypes {
-  getPokemonsReducer,
-  getPokemonByNameReducer,
-}
+export type NamedAPIResource = {
+  name: string;
+  url: string;
+};
