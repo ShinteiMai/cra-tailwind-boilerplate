@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getPokemons,
-  pokemonSelector,
-  pokemonStatusSelector,
-} from "./features/pokemonSlice";
+import { getPokemons, pokemonsSelector } from "./features/pokemonSlice";
 import { SliceStatus } from "./globals";
 
 const App: React.FC = () => {
   const [query, setQuery] = useState<string>("");
   const dispatch = useDispatch();
-  const pokemons = useSelector(pokemonSelector);
-  const status = useSelector(pokemonStatusSelector);
+  const pokemons = useSelector(pokemonsSelector);
 
   useEffect(() => {
     dispatch(getPokemons({}));
-  }, []);
+  }, [dispatch]);
 
   const handleButtonClick = () => {};
 
@@ -43,13 +38,15 @@ const App: React.FC = () => {
           Search
         </button>
       </div>
-      {status.state === SliceStatus.LOADING ? (
+      {pokemons.status.state === SliceStatus.LOADING ? (
         <div>Loading...</div>
       ) : (
         <>
-          {pokemons?.map((pokemon) => (
+          {pokemons.data.map((pokemon) => (
             <div key={pokemon.id}>
-              <p className="capitalize">{pokemon.name}</p>
+              <p className="capitalize">
+                {pokemon.id} - {pokemon.name}
+              </p>
             </div>
           ))}
         </>

@@ -2,8 +2,12 @@ import { HTTP_METHODS } from "../globals";
 import { createApiRequest } from "./axios";
 
 class ApiCallCreator {
-  getPokemons() {
-    return createApiRequest("/pokemon", HTTP_METHODS.GET, {});
+  getPokemons(limit: number, offset: number) {
+    return createApiRequest(
+      `/pokemon?limit=${limit}&offset=${offset}`,
+      HTTP_METHODS.GET,
+      {}
+    );
   }
 
   getPokemonByName(name: string) {
