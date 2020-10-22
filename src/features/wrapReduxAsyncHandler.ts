@@ -20,12 +20,16 @@ export const wrapReduxAsyncHandler = (
       dispatch(statusHandler.success({ reducerType }));
     })
     .catch((err) => {
-      const error = JSON.parse(err.message);
-      error.messages.forEach((object: any) => {
-        dispatch(statusHandler.error({ ...object, reducerType }));
-        console.error(
-          `Request failed with status code of ${error.statusCode} - ${object.message}`
-        );
-      });
+      if (err.message) {
+        const error = JSON.parse(err.message);
+        error.messages.forEach((object: any) => {
+          dispatch(statusHandler.error({ ...object, reducerType }));
+          console.error(
+            `Request failed with status code of ${error.statusCode} - ${object.message}`
+          );
+        });
+      } else {
+        console.error(err);
+      }
     });
 };

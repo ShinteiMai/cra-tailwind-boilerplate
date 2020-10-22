@@ -44,9 +44,8 @@ const App: React.FC = () => {
         <>
           {pokemons.data.map((pokemon) => (
             <div key={pokemon.id}>
-              <p className="capitalize">
-                {pokemon.id} - {pokemon.name}
-              </p>
+              <img src={pokemon.sprite} alt={pokemon.name} />
+              <p className="capitalize">{pokemon.name}</p>
             </div>
           ))}
         </>

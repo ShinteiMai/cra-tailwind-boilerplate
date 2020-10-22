@@ -13,6 +13,12 @@ type Pokemon = {
   isDefault: boolean;
   order: number;
   weight: number;
+  sprite: string;
+};
+
+type NamedAPIResource = {
+  name: string;
+  url: string;
 };
 
 type SliceState = {
@@ -50,10 +56,9 @@ const pokemonSlice = createSlice({
       state.status.type = reducerType;
       state.status.state = SliceStatus.SUCCESS;
     },
-    getPokemonsReducer(state, action: PayloadAction<{ results: Pokemon[] }>) {
-      const { results } = action.payload;
-      console.log(results);
-      state.data = results;
+    getPokemonsReducer(state, action: PayloadAction<{ pokemons: Pokemon[] }>) {
+      const { pokemons } = action.payload;
+      state.data = pokemons;
     },
     getPokemonByNameReducer(state, action) {
       const payload = action.payload;
@@ -78,9 +83,24 @@ export const getPokemons = wrapReduxAsyncHandler(
   statusHandler,
   SliceTypes.getPokemonsReducer,
   async (dispatch) => {
-    const { results } = await fromApi.getPokemons(10, 10);
-    console.log(results);
-    dispatch(getPokemonsReducer({ results }));
+    const { results } = await fromApi.getPokemons(5, 5);
+    const pokemons: Pokemon[] = [];
+    for await (const { url } of results) {
+      const pokemonId = Number(url.split("/").slice(-2)[0]);
+      const pokemon = await fromApi.getPokemonById(pokemonId);
+      pokemons.push({
+        id: pokemon.id,
+        name: pokemon.name,
+        baseExperience: pokemon.base_experience,
+        height: pokemon.height,
+        isDefault: pokemon.is_default,
+        order: pokemon.order,
+        weight: pokemon.weight,
+        sprite: pokemon.sprites.front_default,
+      });
+    }
+
+    dispatch(getPokemonsReducer({ pokemons }));
   }
 );
 
