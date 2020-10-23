@@ -43,7 +43,7 @@ export type Pokemon = {
   types: {
     slot: number;
     type: NamedAPIResource;
-  };
+  }[];
 };
 
 type SliceState = {
@@ -67,7 +67,6 @@ const pokemonsSlice = createSlice({
     ...statusHandlerReducer,
     getPokemonsReducer(state, action: PayloadAction<{ pokemons: Pokemon[] }>) {
       const { pokemons } = action.payload;
-      console.log(pokemons);
 
       const existingPokemonIds = state.data.map((p) => p.id);
       const mergedPokemons = pokemons.filter(
@@ -99,7 +98,7 @@ const statusHandler = { initialize, error, success };
 export const getPokemons = wrapReduxAsyncHandler(
   statusHandler,
   async (dispatch) => {
-    const { results } = await fromApi.getPokemons(2, 2);
+    const { results } = await fromApi.getPokemons(5, 5);
 
     const pokemons: Pokemon[] = [];
     for await (const { url } of results) {
