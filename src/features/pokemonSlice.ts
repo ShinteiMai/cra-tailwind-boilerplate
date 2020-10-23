@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ReducerTypes } from "./reducerTypes";
 import fromApi from "../api/fromApi";
 import { SliceStatus } from "../globals";
 import { RootState } from "./store";
 import { wrapReduxAsyncHandler } from "./wrapReduxAsyncHandler";
 import { NamedAPIResource } from "./types";
 import { statusHandlerReducer } from "./statusHandlerReducer";
+import { camelcaseObject } from "../utils/camelcaseObject";
 
 export type Pokemon = {
   id: number;
@@ -24,7 +24,16 @@ export type Pokemon = {
   moves: {
     move: NamedAPIResource;
   }[];
-  sprite: string;
+  sprites: {
+    frontDefault: string;
+    frontShiny: string;
+    frontFemale: string;
+    frontShinyFemale: string;
+    backDefault: string;
+    backShiny: string;
+    backFemale: string;
+    backShinyFemale: string;
+  };
   species: NamedAPIResource[];
   stats: {
     baseStat: number;
@@ -41,7 +50,6 @@ type SliceState = {
   data: Pokemon[];
   status: {
     state: SliceStatus;
-    type: ReducerTypes | null;
   };
 };
 
@@ -49,18 +57,24 @@ const initialState: SliceState = {
   data: [],
   status: {
     state: SliceStatus.IDLE,
-    type: null,
   },
 };
 
-const pokemonSlice = createSlice({
+const pokemonsSlice = createSlice({
   name: "pokemons",
   initialState,
   reducers: {
     ...statusHandlerReducer,
     getPokemonsReducer(state, action: PayloadAction<{ pokemons: Pokemon[] }>) {
       const { pokemons } = action.payload;
-      state.data = pokemons;
+      console.log(pokemons);
+
+      const existingPokemonIds = state.data.map((p) => p.id);
+      const mergedPokemons = pokemons.filter(
+        (pokemon) => !existingPokemonIds.includes(pokemon.id)
+      );
+
+      state.data = state.data.concat(mergedPokemons);
     },
     getPokemonByNameReducer(state, action) {
       const payload = action.payload;
@@ -69,14 +83,14 @@ const pokemonSlice = createSlice({
   },
 });
 
-export const pokemonsReducer = pokemonSlice.reducer;
+export const pokemonsReducer = pokemonsSlice.reducer;
 export const {
   initialize,
   error,
   success,
   getPokemonsReducer,
   getPokemonByNameReducer,
-} = pokemonSlice.actions;
+} = pokemonsSlice.actions;
 
 export const pokemonsSelector = (state: RootState) => state.pokemons;
 
@@ -84,7 +98,6 @@ const statusHandler = { initialize, error, success };
 
 export const getPokemons = wrapReduxAsyncHandler(
   statusHandler,
-  ReducerTypes.getPokemonsReducer,
   async (dispatch) => {
     const { results } = await fromApi.getPokemons(2, 2);
 
@@ -92,7 +105,7 @@ export const getPokemons = wrapReduxAsyncHandler(
     for await (const { url } of results) {
       const pokemonId = Number(url.split("/").slice(-2)[0]);
       const pokemon = await fromApi.getPokemonById(pokemonId);
-      pokemons.push(pokemon);
+      pokemons.push(camelcaseObject(pokemon));
     }
 
     dispatch(getPokemonsReducer({ pokemons }));
@@ -101,6 +114,5 @@ export const getPokemons = wrapReduxAsyncHandler(
 
 export const getPokemonByName = wrapReduxAsyncHandler(
   statusHandler,
-  ReducerTypes.getPokemonByNameReducer,
   async (dispatch, { name }) => {}
 );

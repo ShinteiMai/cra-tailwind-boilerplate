@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pokemon } from "../features/pokemonSlice";
 
 type Props = Pokemon;
 
-const PokemonCard: React.FC<Props> = ({ name, sprite, id }) => {
+const PokemonCard: React.FC<Props> = ({ name, sprites, id }) => {
+  const [spriteState, setSpriteState] = useState<string>(sprites.frontDefault);
+
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg">
-      <div className="mx-auto w-full flex items-center justify-center">
-        <img className="w-40" src={sprite} alt="Sunset in the mountains" />
+    <div className="max-w-sm rounded overflow-hidden shadow-lg mx-auto">
+      <div
+        className="mx-auto w-full flex items-center justify-center"
+        onMouseEnter={() => setSpriteState(sprites.backDefault)}
+        onMouseLeave={() => setSpriteState(sprites.frontDefault)}
+      >
+        <img className="w-40" src={spriteState} alt="Sunset in the mountains" />
       </div>
 
       <div className="px-6 py-4">

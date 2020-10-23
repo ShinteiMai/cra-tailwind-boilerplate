@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import PokemonCard from "./components/PokemonCard";
 import Skeleton from "./components/Skeleton";
 import { getPokemons, pokemonsSelector } from "./features/pokemonSlice";
-import { ReducerTypes } from "./features/reducerTypes";
 import { SliceStatus } from "./globals";
 
 const App: React.FC = () => {
@@ -12,7 +11,7 @@ const App: React.FC = () => {
   const pokemons = useSelector(pokemonsSelector);
 
   useEffect(() => {
-    dispatch(getPokemons({}));
+    dispatch(getPokemons());
   }, [dispatch]);
 
   const handleButtonClick = () => {};
@@ -41,8 +40,7 @@ const App: React.FC = () => {
           Search
         </button>
       </div>
-      {pokemons.status.state === SliceStatus.LOADING &&
-      pokemons.status.type === ReducerTypes.getPokemonsReducer ? (
+      {pokemons.status.state === SliceStatus.LOADING ? (
         <div className="mt-4">
           <Skeleton />
         </div>
