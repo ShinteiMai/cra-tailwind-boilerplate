@@ -9,9 +9,11 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
   const pokemons = useSelector(pokemonsSelector);
 
+  const [page, setPage] = useState(0);
+
   useEffect(() => {
-    dispatch(getPokemons());
-  }, [dispatch]);
+    dispatch(getPokemons({ page }));
+  }, [dispatch, page]);
 
   return (
     <div className="text-center mt-24 px-24">

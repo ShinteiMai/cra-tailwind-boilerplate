@@ -5,6 +5,9 @@ const axios = Axios.create({
   baseURL: "https://pokeapi.co/api/v2",
 });
 
+export const baseImageUrl =
+  "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/";
+
 export const createApiRequest = async (
   url: string,
   method: HTTP_METHODS,
