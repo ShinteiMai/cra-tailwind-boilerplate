@@ -16,7 +16,7 @@ const App: React.FC = () => {
   }, [dispatch, page]);
 
   return (
-    <div className="text-center mt-24 px-24">
+    <div className="text-center mt-24 px-24" data-testid="app">
       <h1 className="text-4xl">CRA Tailwind CSS Boilerplate</h1>
       <p className="text-lg">
         A sophisticated boilerplate for creating react applications with
